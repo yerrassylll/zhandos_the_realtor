@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Жандос — риелтор. Квартиры на сутки и на месяц</title>
+<meta name="description" content="Жандос, риелтор. Подберу квартиру на сутки или на месяц под ваши даты и бюджет. Оставьте заявку, и я свяжусь с вами.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- Tokens ---------- */
+:root{
+  --bg:#F2F7F9; --surface:#FFFFFF; --surface-2:#E3EFF3;
+  --ink:#0C2A33; --ink-soft:#47636C; --line:#CDDFE5;
+  --sea:#12708A; --sky:#A9DDEB; --sky-ink:#0C2A33;
+  --gold:#F4B92C; --gold-hover:#FFC845; --gold-ink:#1D1500;
+  --deep:#0C2A33; --deep-ink:#EAF6F9; --deep-soft:#A9C7D0; --deep-line:#2A4B56;
+  --danger:#B3261E;
+  --shadow:0 1px 2px rgba(12,42,51,.06),0 16px 36px -16px rgba(12,42,51,.22);
+  --font-display:'Unbounded','Onest',system-ui,sans-serif;
+  --font-body:'Onest',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#071A20; --surface:#0E2730; --surface-2:#12333E;
+    --ink:#E6F2F5; --ink-soft:#9EBCC5; --line:#1E414C;
+    --sea:#67C6DF; --sky:#1F5E70; --sky-ink:#E6F2F5;
+    --deep:#0E3542; --deep-line:#2A5563; --danger:#FF9285;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 36px -16px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#071A20; --surface:#0E2730; --surface-2:#12333E;
+  --ink:#E6F2F5; --ink-soft:#9EBCC5; --line:#1E414C;
+  --sea:#67C6DF; --sky:#1F5E70; --sky-ink:#E6F2F5;
+  --deep:#0E3542; --deep-line:#2A5563; --danger:#FF9285;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 36px -16px rgba(0,0,0,.6);
+}
+
+/* ---------- Base ---------- */
+*,*::before,*::after{box-sizing:inherit}
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px);
+  scrollbar-gutter:stable;
+  -webkit-text-size-adjust:100%;
+  background:var(--bg);
+}
+html.modal-open{overflow:hidden}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:400 1rem/1.6 var(--font-body);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:clip;
+}
+img,svg{max-width:100%}
+h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:600;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sea);outline-offset:3px}
+.wrap{width:min(1180px,100% - 40px);margin-inline:auto}
+.deep :focus-visible{outline-color:var(--gold)}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:52px;padding:0 28px;border-radius:999px;border:2px solid transparent;
+  font:600 1rem/1 var(--font-body);text-decoration:none;cursor:pointer;
+  transition:transform .15s ease,background-color .15s ease,border-color .15s ease;
+}
+.btn:active{transform:translateY(1px)}
+.btn-gold{background:var(--gold);color:var(--gold-ink)}
+.btn-gold:hover{background:var(--gold-hover)}
+.btn-gold:focus-visible{outline-color:var(--ink)}
+.deep .btn-gold:focus-visible{outline-color:var(--gold)}
+.btn-line{border-color:var(--ink);color:var(--ink);background:transparent}
+.btn-line:hover{background:var(--surface-2)}
+.btn-sm{min-height:44px;padding:0 22px;font-size:.95rem}
+
+/* ---------- Header ---------- */
+.site-header{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  background:color-mix(in srgb,var(--bg) 90%,transparent);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:70px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand-mark{width:40px;height:40px;border-radius:12px;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;flex:none}
+.brand-name{display:block;font:600 1.05rem/1 var(--font-display)}
+.brand-role{display:block;margin-top:5px;font-size:.8rem;line-height:1;color:var(--ink-soft)}
+.nav ul{display:flex;gap:30px;list-style:none;margin:0;padding:0}
+.nav a{display:inline-block;padding:8px 2px;text-decoration:none;font-weight:500;border-bottom:2px solid transparent}
+.nav a:hover{border-bottom-color:var(--gold)}
+.header-end{display:flex;align-items:center;gap:12px}
+.menu-btn{display:none;position:relative;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line);background:transparent;cursor:pointer;padding:0}
+.menu-btn span{position:absolute;left:14px;right:14px;height:2px;border-radius:2px;background:var(--ink);transition:transform .2s ease,top .2s ease}
+.menu-btn span:nth-child(1){top:18px}
+.menu-btn span:nth-child(2){top:26px}
+.menu-btn[aria-expanded="true"] span:nth-child(1){top:22px;transform:rotate(45deg)}
+.menu-btn[aria-expanded="true"] span:nth-child(2){top:22px;transform:rotate(-45deg)}
+
+/* ---------- Hero ---------- */
+.hero{padding:clamp(32px,6vw,80px) 0 clamp(56px,8vw,104px)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(40px,6vw,72px);align-items:center}
+h1{font-size:clamp(1.9rem,4.4vw,3.2rem);line-height:1.14;letter-spacing:-.02em;margin-bottom:22px}
+.lead{font-size:clamp(1.05rem,1.5vw,1.2rem);color:var(--ink-soft);max-width:34rem;margin-bottom:32px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+.hero-note{margin-top:22px;color:var(--ink-soft);font-size:.95rem}
+
+.hero-visual{position:relative;isolation:isolate}
+.hero-visual::before{
+  content:"";position:absolute;inset:-14px -12px -14px 16px;z-index:-1;
+  background:var(--surface-2);border-radius:38px;transform:rotate(2.2deg);
+}
+.picker{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:clamp(18px,3vw,28px);box-shadow:var(--shadow)}
+.seg{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:999px;background:var(--surface-2)}
+.seg .thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:var(--gold);transition:transform .3s cubic-bezier(.3,.9,.3,1)}
+.seg[data-mode="month"] .thumb{transform:translateX(100%)}
+.seg button{position:relative;z-index:1;min-height:46px;border:0;border-radius:999px;background:none;color:var(--ink-soft);font:600 .98rem/1 var(--font-body);cursor:pointer;transition:color .2s}
+.seg button[aria-pressed="true"]{color:var(--gold-ink)}
+.cal-head{display:flex;justify-content:space-between;align-items:baseline;margin:24px 0 14px}
+.cal-title{font:600 1.05rem/1.2 var(--font-display)}
+.cal-hint{font-size:.85rem;color:var(--ink-soft)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal .dow{text-align:center;font-size:.78rem;color:var(--ink-soft);padding-bottom:4px}
+.cal .d{
+  aspect-ratio:1;display:grid;place-items:center;border-radius:10px;
+  font-size:.92rem;font-variant-numeric:tabular-nums;
+  transition:background-color .25s ease var(--delay,0ms),color .25s ease var(--delay,0ms),box-shadow .25s ease var(--delay,0ms);
+}
+.cal .d.fill{background:var(--sky);color:var(--sky-ink)}
+.cal .d.start{background:var(--gold);color:var(--gold-ink);font-weight:600}
+.cal .d.end{box-shadow:inset 0 0 0 2px var(--gold);font-weight:600}
+.cal-note{margin:18px 0 20px;min-height:3.2em;font-size:.95rem;color:var(--ink-soft)}
+.cal-note strong{display:block;color:var(--ink);font-weight:600}
+.picker .btn{width:100%}
+
+/* ---------- Sections ---------- */
+.section{padding:clamp(56px,8vw,104px) 0}
+.h2{font-size:clamp(1.5rem,3.2vw,2.3rem);line-height:1.2;letter-spacing:-.015em}
+.section-lead{margin-top:14px;color:var(--ink-soft);max-width:38rem}
+
+/* Services */
+.services-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:44px}
+.svc{display:flex;flex-direction:column;gap:22px;padding:clamp(24px,3.4vw,40px);border-radius:32px}
+.svc-day{background:var(--surface);border:1px solid var(--line)}
+.svc-month{background:var(--deep);color:var(--deep-ink)}
+.svc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.svc h3{font-size:clamp(1.25rem,2.4vw,1.6rem);line-height:1.2;margin-bottom:10px}
+.svc-lead{color:var(--ink-soft);max-width:26rem}
+.svc-month .svc-lead{color:var(--deep-soft)}
+.plan{flex:none;width:clamp(110px,16vw,168px);height:auto}
+.svc-day .plan{color:var(--sea)}
+.svc-month .plan{color:#9ED8E8}
+.plan .hl{fill:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.chips li{padding:6px 14px;border-radius:999px;background:var(--surface-2);font-size:.9rem}
+.svc-month .chips li{background:rgba(255,255,255,.1)}
+.ticks{list-style:none;margin:0;padding:0}
+.ticks li{position:relative;padding:14px 0 14px 36px;border-top:1px solid var(--line)}
+.svc-month .ticks li{border-top-color:var(--deep-line)}
+.ticks li::before{
+  content:"";position:absolute;left:0;top:16px;width:22px;height:22px;border-radius:50%;
+  background:var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.4l2.4 2.3 4.6-5' fill='none' stroke='%231D1500' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat;
+}
+.svc-foot{margin-top:auto;padding-top:6px;display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.svc-price{font-size:.92rem;color:var(--ink-soft)}
+.svc-month .svc-price{color:var(--deep-soft)}
+
+/* How it works */
+.how{background:var(--surface-2)}
+.steps{list-style:none;margin:56px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:28px;counter-reset:step}
+.steps li{position:relative;padding-top:30px;border-top:2px solid color-mix(in srgb,var(--ink) 22%,transparent);counter-increment:step}
+.steps li::before{
+  content:counter(step);position:absolute;top:-16px;left:0;width:32px;height:32px;border-radius:50%;
+  display:grid;place-items:center;background:var(--gold);color:var(--gold-ink);font:600 .9rem/1 var(--font-display);
+}
+.steps h3{font:600 1.05rem/1.35 var(--font-body);margin-bottom:8px}
+.steps p{color:var(--ink-soft);font-size:.97rem;max-width:22rem}
+
+/* Principles */
+.split{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(32px,6vw,80px);align-items:start}
+.rows{margin:0;padding:0;list-style:none}
+.rows li{display:grid;grid-template-columns:.9fr 1.1fr;gap:20px;padding:26px 0;border-top:1px solid var(--line)}
+.rows li:last-child{border-bottom:1px solid var(--line)}
+.rows h3{font:600 1.05rem/1.4 var(--font-body)}
+.rows p{color:var(--ink-soft)}
+
+/* FAQ */
+.faq{max-width:820px;margin-top:36px}
+.faq details{border-top:1px solid var(--line)}
+.faq details:last-child{border-bottom:1px solid var(--line)}
+.faq summary{position:relative;list-style:none;cursor:pointer;padding:22px 48px 22px 0;font:600 1.05rem/1.4 var(--font-body)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:"";position:absolute;right:6px;top:50%;width:14px;height:14px;margin-top:-7px;
+  background:linear-gradient(currentColor,currentColor) center/100% 2px no-repeat,linear-gradient(currentColor,currentColor) center/2px 100% no-repeat;
+  transition:transform .2s ease;
+}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{margin:0 0 22px;color:var(--ink-soft);max-width:60ch}
+
+/* Contact */
+.cta-band{padding:0 0 clamp(56px,8vw,104px)}
+.cta{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,5vw,56px);align-items:center;padding:clamp(28px,5vw,64px);border-radius:36px;background:var(--deep);color:var(--deep-ink)}
+.cta .h2{margin-bottom:16px}
+.cta p{color:var(--deep-soft);max-width:30rem;margin-bottom:28px}
+.contacts{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.contacts a{display:block;padding:16px 20px;border:1.5px solid var(--deep-line);border-radius:16px;text-decoration:none;transition:border-color .15s ease,background-color .15s ease}
+.contacts a:hover{border-color:var(--gold);background:rgba(255,255,255,.05)}
+.contacts small{display:block;color:var(--deep-soft);font-size:.82rem;margin-bottom:2px}
+.contacts span{font-weight:600;font-size:1.05rem}
+
+/* Footer */
+.site-footer{padding:28px 0 40px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:.92rem}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px}
+
+/* Mobile sticky CTA */
+.mobile-cta{
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:15;
+  padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));
+  background:color-mix(in srgb,var(--bg) 92%,transparent);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);
+  transform:translateY(110%);visibility:hidden;
+  transition:transform .25s ease,visibility 0s linear .25s;
+}
+.mobile-cta.show{transform:none;visibility:visible;transition-delay:0s}
+.mobile-cta .btn{width:100%}
+
+/* ---------- Modal ---------- */
+dialog{
+  border:0;padding:0;background:var(--surface);color:var(--ink);
+  width:min(520px,calc(100% - 32px));max-height:calc(100dvh - 32px);
+  border-radius:28px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);overflow:auto;
+}
+dialog[open]{animation:sheet-in .25s cubic-bezier(.2,.8,.2,1)}
+dialog::backdrop{background:rgba(6,20,26,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+@keyframes sheet-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.sheet{position:relative;padding:32px 28px 28px}
+.close{position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:50%;border:0;background:var(--surface-2);color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.close:hover{background:var(--line)}
+.sheet h2{font-size:1.4rem;line-height:1.25;margin:0 44px 10px 0}
+.sheet h2:focus{outline:none}
+.sheet .sub{color:var(--ink-soft);margin-bottom:22px}
+.form{display:grid;gap:18px}
+.field{display:grid;gap:6px;border:0;margin:0;padding:0;min-width:0}
+.field>label,.field>legend{font-weight:600;font-size:.92rem;padding:0}
+.input{
+  width:100%;min-height:50px;padding:0 14px;border-radius:12px;
+  border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:1rem;
+}
+textarea.input{padding:12px 14px;min-height:88px;resize:vertical}
+.input:focus{outline:none;border-color:var(--sea);box-shadow:0 0 0 3px color-mix(in srgb,var(--sea) 28%,transparent)}
+.input[aria-invalid="true"]{border-color:var(--danger)}
+.err{color:var(--danger);font-size:.88rem}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{position:relative}
+.opt input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
+.opt span{display:grid;place-items:center;min-height:50px;border-radius:12px;border:1.5px solid var(--line);font-weight:600;transition:background-color .15s,border-color .15s}
+.opt input:checked+span{background:var(--gold);border-color:var(--gold);color:var(--gold-ink)}
+.opt input:focus-visible+span{outline:3px solid var(--sea);outline-offset:2px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row2[hidden]{display:none}
+.legal{font-size:.82rem;color:var(--ink-soft)}
+.form .btn{width:100%}
+.form .btn[disabled]{opacity:.7;cursor:progress}
+.done{text-align:left;display:grid;gap:14px;justify-items:start;padding-top:8px}
+.done[hidden]{display:none}
+.done .ok{width:56px;height:56px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center}
+.done h2{margin:0}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1000px){
+  .steps{grid-template-columns:1fr 1fr;row-gap:44px}
+}
+@media (max-width:859px){
+  .hero-grid,.services-grid,.split,.cta{grid-template-columns:1fr}
+  .header-cta{display:none}
+  .menu-btn{display:block}
+  .nav{position:absolute;left:0;right:0;top:100%;display:none;background:var(--bg);border-bottom:1px solid var(--line);padding:6px 20px 18px}
+  .nav.open{display:block}
+  .nav ul{flex-direction:column;gap:0}
+  .nav a{display:block;padding:15px 0;border-bottom:1px solid var(--line)}
+  .hero-visual{margin-inline:6px}
+  .mobile-cta{display:block}
+  .site-footer{padding-bottom:104px}
+  .rows li{grid-template-columns:1fr;gap:6px}
+}
+@media (max-width:600px){
+  .steps{grid-template-columns:1fr;gap:0;margin-top:40px}
+  .steps li{border-top:0;border-left:2px solid color-mix(in srgb,var(--ink) 22%,transparent);padding:0 0 32px 30px}
+  .steps li:last-child{padding-bottom:0}
+  .steps li::before{top:0;left:-17px}
+  .hero-actions .btn{width:100%}
+  .svc-top{flex-direction:column-reverse}
+  .plan{width:150px}
+  dialog{width:100%;max-width:100%;max-height:92dvh;margin:auto 0 0;border-radius:28px 28px 0 0}
+  .sheet{padding:28px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;transition-delay:0ms !important}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="Жандос, риелтор — на главную">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>
+      </span>
+      <span><span class="brand-name">Жандос</span><span class="brand-role">риелтор</span></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Основное меню">
+      <ul>
+        <li><a href="#services">Услуги</a></li>
+        <li><a href="#how">Как это работает</a></li>
+        <li><a href="#faq">Вопросы</a></li>
+        <li><a href="#contact">Контакты</a></li>
+      </ul>
+    </nav>
+    <div class="header-end">
+      <button class="btn btn-gold btn-sm header-cta" type="button" data-open-request>Оставить заявку</button>
+      <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Открыть меню"><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Подберу квартиру на сутки или на месяц</h1>
+        <p class="lead">Я Жандос, риелтор. Расскажите, когда и на сколько нужна квартира, — предложу подходящие варианты и помогу с заселением.</p>
+        <div class="hero-actions">
+          <button class="btn btn-gold" type="button" data-open-request>Оставить заявку</button>
+          <a class="btn btn-line" href="#services">Смотреть услуги</a>
+        </div>
+        <p class="hero-note">Отвечаю в WhatsApp, Telegram и по телефону.</p>
+      </div>
+
+      <div class="hero-visual">
+        <div class="picker">
+          <div class="seg" id="seg" data-mode="day" role="group" aria-label="Срок аренды">
+            <span class="thumb" aria-hidden="true"></span>
+            <button type="button" data-mode="day" aria-pressed="true">На сутки</button>
+            <button type="button" data-mode="month" aria-pressed="false">На месяц</button>
+          </div>
+          <div class="cal-head">
+            <span class="cal-title" id="cal-title"></span>
+            <span class="cal-hint">так выглядит ваш срок</span>
+          </div>
+          <div class="cal" id="cal" aria-hidden="true"></div>
+          <p class="cal-note" id="cal-note" aria-live="polite"></p>
+          <button class="btn btn-gold" id="picker-cta" type="button" data-open-request data-service="day">Оставить заявку на сутки</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section" id="services">
+    <div class="wrap">
+      <h2 class="h2">Две услуги под ваш срок</h2>
+      <p class="section-lead">Выберите, на какой срок нужна квартира. Подходящие варианты я подберу под ваши даты, район и бюджет.</p>
+
+      <div class="services-grid">
+        <article class="svc svc-day">
+          <div class="svc-top">
+            <div>
+              <h3>Квартира на сутки</h3>
+              <p class="svc-lead">Для командировки, поездки в гости или короткого отдыха.</p>
+            </div>
+            <svg class="plan" viewBox="0 0 240 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="8" y="8" width="224" height="144" rx="3"/>
+              <path d="M140 8v62M140 100v52M140 100h-30M110 100a30 30 0 0 1 30-30"/>
+              <rect x="20" y="20" width="64" height="26" rx="6"/>
+              <rect x="30" y="60" width="44" height="22" rx="4"/>
+              <circle cx="70" cy="122" r="14"/>
+              <rect class="hl" x="156" y="20" width="60" height="42" rx="4"/>
+              <path d="M164 28h18v10h-18zM190 28h18v10h-18z"/>
+              <rect x="152" y="112" width="68" height="28" rx="10"/>
+            </svg>
+          </div>
+          <ul class="chips" aria-label="Подходит для">
+            <li>командировка</li><li>транзит</li><li>выходные</li><li>праздник</li>
+          </ul>
+          <ul class="ticks">
+            <li>Заезд и выезд в удобное время по договорённости</li>
+            <li>Чистое бельё и полотенца</li>
+            <li>Wi-Fi, кухня и всё для быта</li>
+            <li>Фото и точный адрес до бронирования</li>
+          </ul>
+          <div class="svc-foot">
+            <p class="svc-price">Стоимость зависит от района и дат. Назову её после заявки.</p>
+            <button class="btn btn-gold" type="button" data-open-request data-service="day">Оставить заявку на сутки</button>
+          </div>
+        </article>
+
+        <article class="svc svc-month deep">
+          <div class="svc-top">
+            <div>
+              <h3>Квартира на месяц</h3>
+              <p class="svc-lead">Для переезда, работы в другом городе, учёбы или ремонта дома.</p>
+            </div>
+            <svg class="plan" viewBox="0 0 240 160" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="8" y="8" width="224" height="144" rx="3"/>
+              <path d="M100 8v52M100 90v62M100 90H72M72 90a28 28 0 0 1 28-28"/>
+              <path d="M16 16h76v18H34v40H16z"/>
+              <rect x="46" y="112" width="40" height="28" rx="4"/>
+              <rect class="hl" x="150" y="20" width="66" height="44" rx="4"/>
+              <rect x="116" y="20" width="24" height="60" rx="3"/>
+              <rect x="116" y="112" width="100" height="28" rx="3"/>
+              <path d="M149 112v28M182 112v28"/>
+            </svg>
+          </div>
+          <ul class="chips" aria-label="Подходит для">
+            <li>переезд</li><li>работа</li><li>учёба</li><li>ремонт</li>
+          </ul>
+          <ul class="ticks">
+            <li>Договор аренды на весь срок</li>
+            <li>Квартира с мебелью и бытовой техникой</li>
+            <li>Понятные условия: цена, залог, коммунальные платежи</li>
+            <li>Возможность продлить проживание</li>
+          </ul>
+          <div class="svc-foot">
+            <p class="svc-price">Стоимость зависит от района и срока. Назову её после заявки.</p>
+            <button class="btn btn-gold" type="button" data-open-request data-service="month">Оставить заявку на месяц</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section how" id="how">
+    <div class="wrap">
+      <h2 class="h2">Как это работает</h2>
+      <ol class="steps">
+        <li>
+          <h3>Вы оставляете заявку</h3>
+          <p>Указываете услугу, даты и пожелания. Это займёт минуту.</p>
+        </li>
+        <li>
+          <h3>Я связываюсь с вами</h3>
+          <p>Звоню или пишу в мессенджер, уточняю бюджет, район и количество гостей.</p>
+        </li>
+        <li>
+          <h3>Смотрим варианты</h3>
+          <p>Присылаю подходящие квартиры с фото, ценой и условиями. На месяц можно приехать на просмотр.</p>
+        </li>
+        <li>
+          <h3>Вы заселяетесь</h3>
+          <p>Встречаю, показываю квартиру и передаю ключи. Для аренды на месяц подписываем договор.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Principles -->
+  <section class="section">
+    <div class="wrap split">
+      <div>
+        <h2 class="h2">Как я работаю</h2>
+        <p class="section-lead">Без сюрпризов на месте: всё важное вы знаете до заселения.</p>
+      </div>
+      <ul class="rows">
+        <li>
+          <h3>Условия до заселения</h3>
+          <p>Цену, залог и то, что входит в стоимость, называю заранее.</p>
+        </li>
+        <li>
+          <h3>Честное описание</h3>
+          <p>Присылаю актуальные фото и точный адрес. Если у квартиры есть минусы, скажу о них сразу.</p>
+        </li>
+        <li>
+          <h3>Один человек на связи</h3>
+          <p>Вы общаетесь напрямую со мной от заявки до заселения и после него, если что-то понадобится.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq" style="padding-top:0">
+    <div class="wrap">
+      <h2 class="h2">Частые вопросы</h2>
+      <div class="faq">
+        <details>
+          <summary>Нужен ли залог?</summary>
+          <p>Чаще всего да. Размер зависит от квартиры и срока проживания, я называю его до бронирования.</p>
+        </details>
+        <details>
+          <summary>Можно ли продлить проживание?</summary>
+          <p>Да, если квартира свободна на нужные даты. Напишите заранее, и я уточню это у владельца.</p>
+        </details>
+        <details>
+          <summary>Какие документы нужны?</summary>
+          <p>Для заселения нужен документ, удостоверяющий личность. При аренде на месяц мы оформляем договор.</p>
+        </details>
+        <details>
+          <summary>Как быстро можно заселиться?</summary>
+          <p>Это зависит от того, какие квартиры свободны на ваши даты. Оставьте заявку, и я отвечу, что доступно.</p>
+        </details>
+        <details>
+          <summary>Можно ли с детьми или животными?</summary>
+          <p>Зависит от квартиры. Укажите это в заявке, и я предложу подходящие варианты.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="cta-band" id="contact">
+    <div class="wrap">
+      <div class="cta deep">
+        <div>
+          <h2 class="h2">Расскажите, на какие даты нужна квартира</h2>
+          <p>Оставьте заявку, и я свяжусь с вами, чтобы уточнить детали и предложить варианты.</p>
+          <button class="btn btn-gold" type="button" data-open-request>Оставить заявку</button>
+        </div>
+        <!-- ЗАМЕНИТЕ контакты на реальные -->
+        <ul class="contacts">
+          <li><a href="tel:+77000000000"><small>Позвонить</small><span>+7 700 000 00 00</span></a></li>
+          <li><a href="https://wa.me/77000000000" target="_blank" rel="noopener"><small>WhatsApp</small><span>Написать в WhatsApp</span></a></li>
+          <li><a href="https://t.me/username" target="_blank" rel="noopener"><small>Telegram</small><span>Написать в Telegram</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap foot">
+    <span>© <span id="year">2026</span> Жандос, риелтор</span>
+    <span>Квартиры на сутки и на месяц</span>
+  </div>
+</footer>
+
+<div class="mobile-cta" id="mobile-cta">
+  <button class="btn btn-gold" type="button" data-open-request>Оставить заявку</button>
+</div>
+
+<!-- Request modal -->
+<dialog id="request-dialog" aria-labelledby="dlg-title">
+  <div class="sheet">
+    <button class="close" type="button" id="dlg-close" aria-label="Закрыть">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+
+    <div id="form-view">
+      <h2 id="dlg-title" tabindex="-1">Оставить заявку</h2>
+      <p class="sub">Укажите даты и контакты. Я перезвоню и предложу варианты.</p>
+
+      <form class="form" id="request-form" novalidate>
+        <fieldset class="field">
+          <legend>Что нужно</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="service" value="day" checked><span>На сутки</span></label>
+            <label class="opt"><input type="radio" name="service" value="month"><span>На месяц</span></label>
+          </div>
+        </fieldset>
+
+        <div class="row2" data-for="day">
+          <div class="field">
+            <label for="f-in-day">Заезд</label>
+            <input class="input" type="date" id="f-in-day" name="checkin">
+            <p class="err" id="e-in-day" hidden></p>
+          </div>
+          <div class="field">
+            <label for="f-out-day">Выезд</label>
+            <input class="input" type="date" id="f-out-day" name="checkout">
+            <p class="err" id="e-out-day" hidden></p>
+          </div>
+        </div>
+
+        <div class="row2" data-for="month" hidden>
+          <div class="field">
+            <label for="f-in-month">Дата заезда</label>
+            <input class="input" type="date" id="f-in-month" name="checkin_month">
+            <p class="err" id="e-in-month" hidden></p>
+          </div>
+          <div class="field">
+            <label for="f-term">Срок</label>
+            <select class="input" id="f-term" name="term">
+              <option>1 месяц</option>
+              <option>2 месяца</option>
+              <option>3 месяца</option>
+              <option>6 месяцев</option>
+              <option>Больше 6 месяцев</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-name">Ваше имя</label>
+          <input class="input" type="text" id="f-name" name="name" autocomplete="name" placeholder="Как к вам обращаться">
+          <p class="err" id="e-name" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="f-phone">Телефон</label>
+          <input class="input" type="tel" id="f-phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="+7 (___) ___-__-__">
+          <p class="err" id="e-phone" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="f-note">Пожелания <span style="font-weight:400;color:var(--ink-soft)">(необязательно)</span></label>
+          <textarea class="input" id="f-note" name="note" rows="3" placeholder="Район, бюджет, сколько человек"></textarea>
+        </div>
+
+        <button class="btn btn-gold" type="submit" id="submit-btn">Отправить заявку</button>
+        <p class="legal">Нажимая кнопку, вы соглашаетесь на обработку персональных данных для связи с вами.</p>
+      </form>
+    </div>
+
+    <div class="done" id="done-view" hidden>
+      <div class="ok" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </div>
+      <h2 id="done-title" tabindex="-1">Заявка отправлена</h2>
+      <p id="done-text" class="sub" style="margin:0"></p>
+      <button class="btn btn-line" type="button" id="done-close">Закрыть</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  'use strict';
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+  const pad = n => String(n).padStart(2,'0');
+  const iso = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+
+  $('#year').textContent = new Date().getFullYear();
+
+  /* ---------- Mobile menu ---------- */
+  const menuBtn = $('#menu-btn'), nav = $('#nav');
+  const setMenu = open => {
+    nav.classList.toggle('open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+  };
+  menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+  nav.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  matchMedia('(min-width:860px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
+
+  /* ---------- Hero picker: calendar ---------- */
+  const now = new Date(), Y = now.getFullYear(), M = now.getMonth();
+  const dim = new Date(Y, M+1, 0).getDate();
+  const offset = (new Date(Y, M, 1).getDay() + 6) % 7;
+  const cal = $('#cal');
+  const monthName = new Intl.DateTimeFormat('ru-RU', {month:'long'}).format(now);
+  $('#cal-title').textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1) + ' ' + Y;
+
+  ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].forEach(n => {
+    const s = document.createElement('span'); s.className = 'dow'; s.textContent = n; cal.append(s);
+  });
+  for (let i = 0; i < offset; i++) cal.append(document.createElement('span'));
+  const cells = [];
+  for (let d = 1; d <= dim; d++) {
+    const s = document.createElement('span'); s.className = 'd'; s.textContent = d; cal.append(s); cells.push(s);
+  }
+  const fmt = d => new Date(Y, M, d).toLocaleDateString('ru-RU', {day:'numeric', month:'long'});
+
+  const seg = $('#seg'), note = $('#cal-note'), pickerCta = $('#picker-cta');
+  function setMode(mode){
+    seg.dataset.mode = mode;
+    $$('button', seg).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+
+    let start, end;
+    if (mode === 'day') { start = Math.min(now.getDate() + 1, dim - 1); end = start + 1; }
+    else { start = 1; end = dim; }
+
+    cells.forEach((c, i) => {
+      const day = i + 1;
+      c.classList.toggle('start', day === start);
+      c.classList.toggle('end', day === end);
+      c.classList.toggle('fill', mode === 'month' && day > start && day < end);
+      c.style.setProperty('--delay', mode === 'month' ? (i * 14) + 'ms' : '0ms');
+    });
+
+    if (mode === 'day') {
+      note.innerHTML = '<strong>Заезд ' + fmt(start) + ', выезд ' + fmt(end) + '</strong>Время заезда и выезда обсудим по договорённости.';
+      pickerCta.textContent = 'Оставить заявку на сутки';
+    } else {
+      note.innerHTML = '<strong>С ' + fmt(start) + ' по ' + fmt(end) + '</strong>Договор на весь срок и возможность продлить.';
+      pickerCta.textContent = 'Оставить заявку на месяц';
+    }
+    pickerCta.dataset.service = mode;
+  }
+  seg.addEventListener('click', e => {
+    const b = e.target.closest('button[data-mode]');
+    if (b) setMode(b.dataset.mode);
+  });
+  setMode('day');
+
+  /* ---------- Sticky CTA on mobile ---------- */
+  const bar = $('#mobile-cta'), vis = {hero:true, contact:false};
+  const updBar = () => bar.classList.toggle('show', !vis.hero && !vis.contact);
+  new IntersectionObserver(es => { vis.hero = es[0].isIntersecting; updBar(); }).observe($('.hero'));
+  new IntersectionObserver(es => { vis.contact = es[0].isIntersecting; updBar(); }).observe($('#contact'));
+
+  /* ---------- Request modal ---------- */
+  const dlg = $('#request-dialog'), form = $('#request-form');
+  const formView = $('#form-view'), doneView = $('#done-view');
+  const nameEl = $('#f-name'), phoneEl = $('#f-phone'), submitBtn = $('#submit-btn');
+  const groups = { day: $('[data-for="day"]'), month: $('[data-for="month"]') };
+  let sent = false;
+
+  const todayISO = iso(new Date());
+  ['#f-in-day', '#f-out-day', '#f-in-month'].forEach(id => $(id).min = todayISO);
+
+  const currentService = () => form.elements.service.value;
+  function showService(s){
+    form.elements.service.value = s;
+    groups.day.hidden = s !== 'day';
+    groups.month.hidden = s !== 'month';
+  }
+  $$('input[name="service"]', form).forEach(r => r.addEventListener('change', () => showService(currentService())));
+
+  // Check-out must be later than check-in
+  $('#f-in-day').addEventListener('change', e => {
+    if (!e.target.value) return;
+    const next = new Date(e.target.value); next.setDate(next.getDate() + 1);
+    $('#f-out-day').min = iso(next);
+  });
+
+  function resetView(){
+    form.reset();
+    clearErrors();
+    $('#f-out-day').min = todayISO;
+    formView.hidden = false; doneView.hidden = true;
+    submitBtn.disabled = false; submitBtn.textContent = 'Отправить заявку';
+    sent = false;
+  }
+  function openRequest(service){
+    if (sent) resetView();
+    showService(service || currentService());
+    document.documentElement.classList.add('modal-open');
+    if (!dlg.open) dlg.showModal();
+    $('#dlg-title').focus({preventScroll:true});
+  }
+  dlg.addEventListener('close', () => document.documentElement.classList.remove('modal-open'));
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  $('#dlg-close').addEventListener('click', () => dlg.close());
+  $('#done-close').addEventListener('click', () => dlg.close());
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-open-request]');
+    if (t) { setMenu(false); openRequest(t.dataset.service); }
+  });
+
+  /* Phone mask: +7 (700) 000-00-00 */
+  function formatPhone(digits){
+    if (digits[0] === '8') digits = '7' + digits.slice(1);
+    if (digits.length === 10) digits = '7' + digits;
+    digits = digits.slice(0, 11);
+    let out = '+7';
+    if (digits.length > 1) out += ' (' + digits.slice(1, 4);
+    if (digits.length >= 5) out += ') ' + digits.slice(4, 7);
+    if (digits.length >= 8) out += '-' + digits.slice(7, 9);
+    if (digits.length >= 10) out += '-' + digits.slice(9, 11);
+    return out;
+  }
+  phoneEl.addEventListener('focus', () => { if (!phoneEl.value) phoneEl.value = '+7'; });
+  phoneEl.addEventListener('blur', () => { if (phoneEl.value === '+7') phoneEl.value = ''; });
+  phoneEl.addEventListener('input', e => {
+    const digits = phoneEl.value.replace(/\D/g, '');
+    const deleting = e.inputType && e.inputType.startsWith('delete');
+    if (!digits || (digits === '7' && deleting)) { phoneEl.value = deleting ? '' : '+7'; return; }
+    phoneEl.value = formatPhone(digits);
+  });
+
+  /* Validation */
+  function setError(input, errEl, msg){
+    errEl.textContent = msg; errEl.hidden = !msg;
+    if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
+    if (msg) input.setAttribute('aria-describedby', errEl.id); else input.removeAttribute('aria-describedby');
+    return !msg;
+  }
+  function clearErrors(){
+    $$('.err', form).forEach(e => { e.hidden = true; e.textContent = ''; });
+    $$('[aria-invalid]', form).forEach(i => { i.removeAttribute('aria-invalid'); i.removeAttribute('aria-describedby'); });
+  }
+  [nameEl, phoneEl, $('#f-in-day'), $('#f-out-day'), $('#f-in-month')].forEach(el => {
+    el.addEventListener('input', () => {
+      el.removeAttribute('aria-invalid');
+      const err = $('#' + el.getAttribute('aria-describedby')); if (err) err.hidden = true;
+    });
+  });
+
+  function validate(){
+    const s = currentService(), bad = [];
+    const check = (ok, el) => { if (!ok) bad.push(el); };
+
+    check(setError(nameEl, $('#e-name'), nameEl.value.trim().length < 2 ? 'Введите имя' : ''), nameEl);
+    const digits = phoneEl.value.replace(/\D/g, '');
+    check(setError(phoneEl, $('#e-phone'), digits.length !== 11 ? 'Введите номер полностью: +7 и 10 цифр' : ''), phoneEl);
+
+    if (s === 'day') {
+      const a = $('#f-in-day'), b = $('#f-out-day');
+      check(setError(a, $('#e-in-day'), !a.value ? 'Выберите дату заезда' : (a.value < todayISO ? 'Дата заезда уже прошла' : '')), a);
+      let msg = '';
+      if (!b.value) msg = 'Выберите дату выезда';
+      else if (a.value && b.value <= a.value) msg = 'Выезд должен быть позже заезда';
+      check(setError(b, $('#e-out-day'), msg), b);
+    } else {
+      const a = $('#f-in-month');
+      check(setError(a, $('#e-in-month'), !a.value ? 'Выберите дату заезда' : (a.value < todayISO ? 'Дата заезда уже прошла' : '')), a);
+    }
+    return bad;
+  }
+
+  /* Front-only: replace the body of this function to send data to a server */
+  async function submitRequest(data){
+    // Пример подключения: 
+    // await fetch('/api/requests', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+    console.info('Новая заявка (демо, никуда не отправляется):', data);
+    await new Promise(r => setTimeout(r, 700));
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const bad = validate();
+    if (bad.length) { bad.find(el => !el.closest('[hidden]')).focus(); return; }
+
+    const s = currentService();
+    const data = {
+      service: s === 'day' ? 'На сутки' : 'На месяц',
+      name: nameEl.value.trim(),
+      phone: phoneEl.value,
+      checkin: s === 'day' ? $('#f-in-day').value : $('#f-in-month').value,
+      checkout: s === 'day' ? $('#f-out-day').value : null,
+      term: s === 'month' ? $('#f-term').value : null,
+      note: $('#f-note').value.trim()
+    };
+
+    submitBtn.disabled = true; submitBtn.textContent = 'Отправляем…';
+    try {
+      await submitRequest(data);
+      sent = true;
+      $('#done-text').textContent = 'Спасибо, ' + data.name + '. Я свяжусь с вами по номеру ' + data.phone + '.';
+      formView.hidden = true; doneView.hidden = false;
+      dlg.scrollTop = 0;
+      $('#done-title').focus({preventScroll:true});
+    } catch (err) {
+      submitBtn.disabled = false; submitBtn.textContent = 'Отправить заявку';
+      alert('Не удалось отправить заявку. Проверьте интернет и попробуйте ещё раз.');
+    }
+  });
+})();
+</script>
+</body>
+</html>
